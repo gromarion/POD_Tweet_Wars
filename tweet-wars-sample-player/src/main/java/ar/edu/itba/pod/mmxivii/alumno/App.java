@@ -7,10 +7,13 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 
 import org.jgroups.JChannel;
+import org.jgroups.Message;
 import org.jgroups.ReceiverAdapter;
+import org.jgroups.View;
 
 import ar.edu.itba.pod.mmxivii.tweetwars.GameMaster;
 import ar.edu.itba.pod.mmxivii.tweetwars.GamePlayer;
+import ar.edu.itba.pod.mmxivii.tweetwars.Status;
 import ar.edu.itba.pod.mmxivii.tweetwars.TweetsProvider;
 
 public class App extends ReceiverAdapter {
@@ -18,6 +21,7 @@ public class App extends ReceiverAdapter {
 	public static final String TWEETS_PROVIDER_NAME = "tweetsProvider";
 	public static final String GAME_MASTER_NAME = "gameMaster";
 	private JChannel channel;
+	private TweetsRepository repo;
 
 	public App(String cluster_name) throws Exception {
 		this.channel = new JChannel();
@@ -27,6 +31,15 @@ public class App extends ReceiverAdapter {
 
 	public JChannel fetch_channel() {
 		return this.channel;
+	}
+	
+	public void viewAccepted(View new_view) {
+		System.out.print("\n** view: " + new_view);
+	}
+
+	public void receive(Message msg) {
+		if (msg.getObject() instanceof Status)
+			repo.add_player_tweet((Status) msg.getObject());
 	}
 
 	public static void main(String[] args) {

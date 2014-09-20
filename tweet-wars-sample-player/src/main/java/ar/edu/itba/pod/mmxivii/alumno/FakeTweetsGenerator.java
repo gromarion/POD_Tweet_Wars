@@ -27,7 +27,6 @@ public class FakeTweetsGenerator extends Thread {
 	public void run() {
 		while (true) {
 			Status fake_tweet = generate_fake_tweet();
-			System.out.println(fake_tweet);
 			try {
 				channel.send(new Message(null, null, fake_tweet));
 			} catch (Exception e) {
