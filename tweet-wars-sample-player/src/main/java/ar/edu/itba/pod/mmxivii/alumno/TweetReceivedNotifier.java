@@ -33,6 +33,7 @@ public class TweetReceivedNotifier extends Thread {
 	}
 
 	private Status[] fetch_received_tweets(int amount) {
-		return TweetsRepository.get_instance().fetch_tweets(amount);
+		return TweetsRepository.get_instance().fetch_valid_players_tweets(
+				amount);
 	}
 }

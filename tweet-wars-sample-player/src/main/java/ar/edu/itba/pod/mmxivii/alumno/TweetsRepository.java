@@ -47,6 +47,16 @@ public class TweetsRepository {
 			return ans;
 		}
 	}
+	
+	public Status[] fetch_valid_players_tweets(int tweet_amount) {
+		synchronized (this.valid_player_tweets) {
+			int ans_amount = fetch_tweet_amount(tweet_amount);
+			Status[] ans = new Status[ans_amount];
+			for (int i = 0; i < ans_amount; i++)
+				ans[i++] = valid_player_tweets.pop();
+			return ans;
+		}
+	}
 
 	public void add_master_tweets(Status[] tweets) {
 		synchronized (this.master_tweets) {
