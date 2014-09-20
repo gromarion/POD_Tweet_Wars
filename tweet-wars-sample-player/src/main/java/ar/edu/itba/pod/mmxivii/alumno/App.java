@@ -6,35 +6,64 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 
+import org.jgroups.JChannel;
+import org.jgroups.ReceiverAdapter;
+
 import ar.edu.itba.pod.mmxivii.tweetwars.GameMaster;
 import ar.edu.itba.pod.mmxivii.tweetwars.GamePlayer;
 import ar.edu.itba.pod.mmxivii.tweetwars.TweetsProvider;
 
-public class App {
+public class App extends ReceiverAdapter {
 
 	public static final String TWEETS_PROVIDER_NAME = "tweetsProvider";
 	public static final String GAME_MASTER_NAME = "gameMaster";
+	private JChannel channel;
+
+	public App(String cluster_name) throws Exception {
+		this.channel = new JChannel();
+		this.channel.setReceiver(this);
+		this.channel.connect(cluster_name);
+	}
+
+	public JChannel fetch_channel() {
+		return this.channel;
+	}
 
 	public static void main(String[] args) {
-		final GamePlayer player = new GamePlayer("51296", "");
-		final String hash = "" + player.hashCode();
+		final GamePlayer player = new GamePlayer(args[2], args[3]);
+		final String player_hash = "" + player.hashCode();
 		try {
 			final Registry registry = connect_to_server(args[0], args[1]);
 			final TweetsProvider tweets_provider = fetch_tweets_provider(registry);
 			final GameMaster master = fetch_game_master(registry);
 
+			register_player(master, player, player_hash);
+
 			try {
-				master.newPlayer(player, hash);
-			} catch (IllegalArgumentException e) {
+				App app = new App(args[4]);
+				new FakeTweetsGenerator(app.fetch_channel(), player,
+						player_hash).start();
+			} catch (Exception e) {
+				System.out
+						.println("Something wrong happened while creating the JChannel");
 				e.printStackTrace();
 			}
-			new TweetsFetcher(player, hash, tweets_provider).start();
+			new TweetsFetcher(player, player_hash, tweets_provider).start();
 			new TweetReceivedNotifier(player, master).start();
 			new FakeTweetsReporter(player, master, tweets_provider).start();
 
 		} catch (RemoteException | NotBoundException e) {
 			System.err.println("App Error: " + e.getMessage());
 			System.exit(-1);
+		}
+	}
+
+	private static void register_player(GameMaster master, GamePlayer player,
+			String player_hash) throws RemoteException {
+		try {
+			master.newPlayer(player, player_hash);
+		} catch (IllegalArgumentException e) {
+			e.printStackTrace();
 		}
 	}
 

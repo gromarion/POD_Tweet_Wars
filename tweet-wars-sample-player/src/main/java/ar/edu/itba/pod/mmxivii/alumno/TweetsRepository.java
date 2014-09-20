@@ -32,35 +32,31 @@ public class TweetsRepository {
 		}
 	}
 
-	public Status[] fetch_master_tweets(int tweet_amount) {
+	public Status[] fetch_master_tweets() {
 		synchronized (this.master_tweets) {
-			int ans_amount = fetch_tweet_amount(tweet_amount);
-			Status[] ans = new Status[ans_amount];
-			for (int i = 0; i < ans_amount; i++)
-				ans[i++] = master_tweets.pop();
+			Status[] ans = new Status[master_tweets.size()];
+			int i = 0;
+			while (!this.master_tweets.isEmpty())
+				ans[i++] = master_tweets.pop();				
 			return ans;
 		}
 	}
 	
-	public Status[] fetch_players_tweets(int tweet_amount) {
+	public Status[] fetch_players_tweets() {
 		synchronized (this.players_tweets) {
-			if (players_tweets.isEmpty())
-				return new Status[0];
-			int ans_amount = fetch_tweet_amount(tweet_amount);
-			Status[] ans = new Status[ans_amount];
-			for (int i = 0; i < ans_amount; i++)
+			Status[] ans = new Status[this.players_tweets.size()];
+			int i = 0;
+			while (!this.players_tweets.isEmpty())
 				ans[i++] = players_tweets.pop();
 			return ans;
 		}
 	}
 	
-	public Status[] fetch_valid_players_tweets(int tweet_amount) {
+	public Status[] fetch_valid_players_tweets() {
 		synchronized (this.valid_player_tweets) {
-			if (valid_player_tweets.isEmpty())
-				return new Status[0];
-			int ans_amount = fetch_tweet_amount(tweet_amount);
-			Status[] ans = new Status[ans_amount];
-			for (int i = 0; i < ans_amount; i++)
+			Status[] ans = new Status[this.valid_player_tweets.size()];
+			int i = 0;
+			while (!this.valid_player_tweets.isEmpty())
 				ans[i++] = valid_player_tweets.pop();
 			return ans;
 		}
@@ -78,12 +74,5 @@ public class TweetsRepository {
 		players_tweets = new ArrayDeque<Status>();
 		valid_player_tweets = new ArrayDeque<Status>();
 		fake_tweets_map = new HashMap<String, List<Status>>();
-	}
-
-	private int fetch_tweet_amount(int tweet_amount) {
-		if (tweet_amount > master_tweets.size())
-			return master_tweets.size();
-		else
-			return tweet_amount;
 	}
 }

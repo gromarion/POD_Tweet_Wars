@@ -50,10 +50,10 @@
             <version>1.6.1</version>
             <scope>test</scope>
         </dependency>
-        <dependency>
-			<groupId>org.twitter4j</groupId>
-			<artifactId>twitter4j-core</artifactId>
-			<version>4.0.2</version>
+		<dependency>
+			<groupId>org.jgroups</groupId>
+			<artifactId>jgroups</artifactId>
+			<version>3.5.0.Final</version>
 		</dependency>
     </dependencies>
     <build>
