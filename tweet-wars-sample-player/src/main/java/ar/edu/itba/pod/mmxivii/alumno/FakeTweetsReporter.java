@@ -38,7 +38,8 @@ public class FakeTweetsReporter extends Thread {
 	}
 
 	private Status[] fetch_fake_tweets() {
-		Status[] tweets = TweetsRepository.get_instance().fetch_tweets(
+		TweetsRepository repo = TweetsRepository.get_instance();
+		Status[] tweets = repo.fetch_players_tweets(
 				MAX_REPORTED_TWEET_AMOUNT);
 		if (tweets.length == 0)
 			return new Status[0];

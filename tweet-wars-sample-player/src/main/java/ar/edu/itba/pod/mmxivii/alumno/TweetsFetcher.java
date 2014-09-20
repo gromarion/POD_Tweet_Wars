@@ -21,7 +21,7 @@ public class TweetsFetcher extends Thread {
 
 	public void run() {
 		try {
-			TweetsRepository.get_instance().add_tweets(
+			TweetsRepository.get_instance().add_master_tweets(
 					tweets_provider.getNewTweets(player, player_hash,
 							BATCH_SIZE));
 		} catch (RemoteException e) {
