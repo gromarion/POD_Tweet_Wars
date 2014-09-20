@@ -8,9 +8,8 @@ import ar.edu.itba.pod.mmxivii.tweetwars.GameMaster;
 import ar.edu.itba.pod.mmxivii.tweetwars.GamePlayer;
 import ar.edu.itba.pod.mmxivii.tweetwars.Status;
 import ar.edu.itba.pod.mmxivii.tweetwars.TweetsProvider;
-import ar.edu.itba.pod.mmxivii.tweetwars.impl.TweetsProviderImpl;
 
-public class FakeTweetsReporter {
+public class FakeTweetsReporter extends Thread {
 
 	private static final int MAX_REPORTED_TWEET_AMOUNT = 10;
 	private GamePlayer player;
@@ -18,7 +17,7 @@ public class FakeTweetsReporter {
 	private TweetsProvider tweet_provider;
 
 	public FakeTweetsReporter(GamePlayer player, GameMaster master,
-			TweetsProviderImpl tweet_provider) {
+			TweetsProvider tweet_provider) {
 		this.player = player;
 		this.master = master;
 		this.tweet_provider = tweet_provider;
@@ -26,10 +25,10 @@ public class FakeTweetsReporter {
 
 	public void run() {
 		while (true) {
-			Status[] false_tweets = fetch_fake_tweets(TweetsRepository
-					.get_instance().fetch_tweets(MAX_REPORTED_TWEET_AMOUNT));
+			Status[] false_tweets = fetch_fake_tweets();
 			try {
-				master.reportFake(player, false_tweets);
+				if (false_tweets.length > 0)
+					master.reportFake(player, false_tweets);
 			} catch (RemoteException e) {
 				System.out
 						.println("Something wrong happened while reporting a fake tweet");
@@ -38,7 +37,11 @@ public class FakeTweetsReporter {
 		}
 	}
 
-	private Status[] fetch_fake_tweets(Status[] tweets) {
+	private Status[] fetch_fake_tweets() {
+		Status[] tweets = TweetsRepository.get_instance().fetch_tweets(
+				MAX_REPORTED_TWEET_AMOUNT);
+		if (tweets.length == 0)
+			return new Status[0];
 		List<Status> ans = new ArrayList<Status>();
 		for (Status status : tweets) {
 			try {

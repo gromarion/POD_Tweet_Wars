@@ -11,7 +11,7 @@ import ar.edu.itba.pod.mmxivii.tweetwars.GamePlayer;
 import ar.edu.itba.pod.mmxivii.tweetwars.TweetsProvider;
 
 public class App {
-	
+
 	public static final String TWEETS_PROVIDER_NAME = "tweetsProvider";
 	public static final String GAME_MASTER_NAME = "gameMaster";
 
@@ -20,7 +20,7 @@ public class App {
 		final String hash = "" + player.hashCode();
 		try {
 			final Registry registry = connect_to_server(args[0], args[1]);
-			final TweetsProvider tweetsProvider = fetch_tweets_provider(registry);
+			final TweetsProvider tweets_provider = fetch_tweets_provider(registry);
 			final GameMaster master = fetch_game_master(registry);
 
 			try {
@@ -28,7 +28,9 @@ public class App {
 			} catch (IllegalArgumentException e) {
 				e.printStackTrace();
 			}
+			new TweetsFetcher(player, hash, tweets_provider).start();
 			new TweetReceivedNotifier(player, master).start();
+			new FakeTweetsReporter(player, master, tweets_provider).start();
 
 		} catch (RemoteException | NotBoundException e) {
 			System.err.println("App Error: " + e.getMessage());

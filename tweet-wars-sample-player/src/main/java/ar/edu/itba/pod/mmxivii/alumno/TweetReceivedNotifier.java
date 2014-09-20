@@ -10,7 +10,6 @@ public class TweetReceivedNotifier extends Thread {
 
 	private GamePlayer player;
 	private GameMaster master;
-	private Status[] tweets;
 
 	private static final int TWEETS_AMOUNT = 100;
 
@@ -21,8 +20,7 @@ public class TweetReceivedNotifier extends Thread {
 
 	public void run() {
 		while (true) {
-			fetch_received_tweets(TWEETS_AMOUNT);
-			for (Status tweet : tweets) {
+			for (Status tweet : fetch_received_tweets(TWEETS_AMOUNT)) {
 				try {
 					master.tweetReceived(player, tweet);
 				} catch (RemoteException e) {
