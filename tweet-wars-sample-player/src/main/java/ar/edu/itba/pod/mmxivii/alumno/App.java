@@ -52,8 +52,9 @@ public class App extends ReceiverAdapter {
 
 			register_player(master, player, player_hash);
 
+			App app = null;
 			try {
-				App app = new App(args[4]);
+				app = new App(args[4]);
 				new FakeTweetsGenerator(app.fetch_channel(), player,
 						player_hash).start();
 			} catch (Exception e) {
@@ -64,6 +65,7 @@ public class App extends ReceiverAdapter {
 			new TweetsFetcher(player, player_hash, tweets_provider).start();
 			new TweetReceivedNotifier(player, master).start();
 			new FakeTweetsReporter(player, master, tweets_provider).start();
+			new FakeTweetsGenerator(app.channel, player, player_hash).start();
 
 		} catch (RemoteException | NotBoundException e) {
 			System.err.println("App Error: " + e.getMessage());
