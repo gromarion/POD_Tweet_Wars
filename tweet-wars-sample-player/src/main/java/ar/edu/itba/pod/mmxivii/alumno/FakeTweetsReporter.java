@@ -1,7 +1,6 @@
 package ar.edu.itba.pod.mmxivii.alumno;
 
 import java.rmi.RemoteException;
-import java.util.ArrayList;
 import java.util.List;
 
 import ar.edu.itba.pod.mmxivii.tweetwars.GameMaster;
@@ -12,6 +11,7 @@ import ar.edu.itba.pod.mmxivii.tweetwars.TweetsProvider;
 public class FakeTweetsReporter extends Thread {
 
 	private static final int MAX_REPORTED_TWEET_AMOUNT = 10;
+	private static final int MIN_FAKE_TWEETS_BATCH = 10;
 	private GamePlayer player;
 	private GameMaster master;
 	private TweetsProvider tweet_provider;
@@ -25,35 +25,36 @@ public class FakeTweetsReporter extends Thread {
 
 	public void run() {
 		while (true) {
-			Status[] false_tweets = fetch_fake_tweets();
-			try {
-				if (false_tweets.length > 0)
-					master.reportFake(player, false_tweets);
-			} catch (RemoteException e) {
-				System.out
-						.println("Something wrong happened while reporting a fake tweet");
-				e.printStackTrace();
-			}
+			report_fake_tweets();
 		}
 	}
 
-	private Status[] fetch_fake_tweets() {
+	private void report_fake_tweets() {
 		TweetsRepository repo = TweetsRepository.get_instance();
-		Status[] tweets = repo.fetch_players_tweets(
-				MAX_REPORTED_TWEET_AMOUNT);
+		Status[] tweets = repo.fetch_players_tweets(MAX_REPORTED_TWEET_AMOUNT);
 		if (tweets.length == 0)
-			return new Status[0];
-		List<Status> ans = new ArrayList<Status>();
-		for (Status status : tweets) {
+			return;
+		for (Status tweet : tweets) {
 			try {
-				if (tweet_provider.getTweet(status.getId()) == null)
-					ans.add(status);
+				check_if_fake_tweet(tweet, repo);
 			} catch (RemoteException e) {
 				System.out
 						.println("Something wrong happened while checking a tweet");
 				e.printStackTrace();
 			}
 		}
-		return (Status[]) ans.toArray();
+	}
+	
+	private void check_if_fake_tweet(Status tweet, TweetsRepository repo)
+			throws RemoteException {
+		if (tweet_provider.getTweet(tweet.getId()) == null) {
+			List<Status> fake_tweets_for_player = repo
+					.fake_tweets_for_player(tweet.getSource());
+			if (fake_tweets_for_player != null
+					&& fake_tweets_for_player.size() >= MIN_FAKE_TWEETS_BATCH) {
+				master.reportFake(player,
+						((Status[]) fake_tweets_for_player.toArray()));
+			}
+		}
 	}
 }

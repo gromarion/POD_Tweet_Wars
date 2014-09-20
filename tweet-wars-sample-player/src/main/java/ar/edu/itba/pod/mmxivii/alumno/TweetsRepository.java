@@ -21,6 +21,10 @@ public class TweetsRepository {
 			instance = new TweetsRepository();
 		return instance;
 	}
+	
+	public List<Status> fake_tweets_for_player(String player_id) {
+		return fake_tweets_map.get(player_id);
+	}
 
 	public void add_player_tweet(Status tweet) {
 		synchronized (this.players_tweets) {
@@ -40,6 +44,8 @@ public class TweetsRepository {
 	
 	public Status[] fetch_players_tweets(int tweet_amount) {
 		synchronized (this.players_tweets) {
+			if (players_tweets.isEmpty())
+				return new Status[0];
 			int ans_amount = fetch_tweet_amount(tweet_amount);
 			Status[] ans = new Status[ans_amount];
 			for (int i = 0; i < ans_amount; i++)
@@ -50,6 +56,8 @@ public class TweetsRepository {
 	
 	public Status[] fetch_valid_players_tweets(int tweet_amount) {
 		synchronized (this.valid_player_tweets) {
+			if (valid_player_tweets.isEmpty())
+				return new Status[0];
 			int ans_amount = fetch_tweet_amount(tweet_amount);
 			Status[] ans = new Status[ans_amount];
 			for (int i = 0; i < ans_amount; i++)

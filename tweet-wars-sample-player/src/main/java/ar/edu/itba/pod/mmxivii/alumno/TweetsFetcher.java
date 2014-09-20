@@ -20,13 +20,16 @@ public class TweetsFetcher extends Thread {
 	}
 
 	public void run() {
-		try {
-			TweetsRepository.get_instance().add_master_tweets(
-					tweets_provider.getNewTweets(player, player_hash,
-							BATCH_SIZE));
-		} catch (RemoteException e) {
-			System.out.println("Something went wrong while getting new tweets");
-			e.printStackTrace();
+		while (true) {
+			try {
+				TweetsRepository.get_instance().add_master_tweets(
+						tweets_provider.getNewTweets(player, player_hash,
+								BATCH_SIZE));
+			} catch (RemoteException e) {
+				System.out
+						.println("Something went wrong while getting new tweets");
+				e.printStackTrace();
+			}
 		}
 	}
 }
