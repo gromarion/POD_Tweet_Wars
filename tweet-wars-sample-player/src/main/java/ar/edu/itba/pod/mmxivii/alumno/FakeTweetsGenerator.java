@@ -1,6 +1,5 @@
 package ar.edu.itba.pod.mmxivii.alumno;
 
-import java.math.BigInteger;
 import java.util.Random;
 
 import org.jgroups.JChannel;
@@ -27,27 +26,23 @@ public class FakeTweetsGenerator extends Thread {
 
 	public void run() {
 		while (true) {
-			if (random.nextFloat() < 0.001) {
-				try {
+			try {
+				if (random.nextFloat() < 0.001) {
 					channel.send(new Message(null, null,
 							generate_fake_tweet_or_trash()));
-				} catch (Exception e) {
-					System.out
-							.println("Something wrong happened while trying to send a fake tweet");
-					e.printStackTrace();
+				} else {
+					channel.send(new Message(null, null, null));
 				}
+			} catch (Exception e) {
+				System.out
+						.println("Something wrong happened while trying to send a fake tweet");
+				e.printStackTrace();
 			}
 		}
 	}
 
 	private Object generate_fake_tweet_or_trash() {
-		if (random.nextFloat() > 0.5) {
-			return new Status(random.nextLong(),
-					new BigInteger(TWEET_CHARACTERS_AMOUNT, random)
-			.toString(TWEET_CHARACTERS_AMOUNT), player.getId(),
-			player_hash);			
-		} else {
-			return null;
-		}
+		return new Status(random.nextLong(), new Random().nextInt() + "",
+				player.getId(), player_hash);
 	}
 }

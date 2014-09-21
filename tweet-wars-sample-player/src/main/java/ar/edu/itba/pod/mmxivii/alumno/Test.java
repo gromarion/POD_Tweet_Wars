@@ -1,8 +1,11 @@
 package ar.edu.itba.pod.mmxivii.alumno;
 
+import java.math.BigInteger;
+import java.util.Random;
+
 
 public class Test {
 	public static void main(String[] args) {
-		System.out.println(null.equals(null));
+		System.out.println(new Random().nextInt());
 	}
 }
