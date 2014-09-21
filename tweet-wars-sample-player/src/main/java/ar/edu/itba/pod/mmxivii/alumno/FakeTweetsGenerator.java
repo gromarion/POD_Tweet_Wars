@@ -14,7 +14,6 @@ public class FakeTweetsGenerator extends Thread {
 	private GamePlayer player;
 	private Random random;
 	private String player_hash;
-	private static final int TWEET_CHARACTERS_AMOUNT = 140;
 
 	public FakeTweetsGenerator(JChannel channel, GamePlayer player,
 			String player_hash) {
@@ -30,8 +29,6 @@ public class FakeTweetsGenerator extends Thread {
 				if (random.nextFloat() < 0.001) {
 					channel.send(new Message(null, null,
 							generate_fake_tweet_or_trash()));
-				} else {
-					channel.send(new Message(null, null, null));
 				}
 			} catch (Exception e) {
 				System.out
