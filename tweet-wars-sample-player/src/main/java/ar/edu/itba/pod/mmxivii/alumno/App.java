@@ -40,13 +40,14 @@ public class App extends ReceiverAdapter {
 	}
 
 	public void viewAccepted(View new_view) {
-		System.out.print("\n** view: " + new_view);
+		System.out.print("\n** player_id: " + player.getId());
 	}
 
 	public void receive(Message msg) {
 		if (msg.getObject() instanceof Status) {
 			Status received_status = (Status) msg.getObject();
-			if (!received_status.getSource().equals(player.getId()))
+			if (received_status.getSource() != null
+					&& !received_status.getSource().equals(player.getId()))
 				new FakeTweetsReporter(player, master, tweets_provider)
 						.filter_and_broadcast_real_tweets((Status) msg
 								.getObject());
