@@ -3,6 +3,8 @@ package ar.edu.itba.pod.mmxivii.alumno;
 import java.rmi.RemoteException;
 import java.util.List;
 
+import java.util.Arrays;
+
 import ar.edu.itba.pod.mmxivii.tweetwars.GameMaster;
 import ar.edu.itba.pod.mmxivii.tweetwars.GamePlayer;
 import ar.edu.itba.pod.mmxivii.tweetwars.Status;
@@ -54,8 +56,7 @@ public class FakeTweetsReporter {
 				.getSource());
 		if (fake_tweets_for_player != null
 				&& fake_tweets_for_player.size() >= GameMaster.MIN_FAKE_TWEETS_BATCH) {
-			Object[] o = fake_tweets_for_player.toArray();
-			master.reportFake(player, ((Status[]) o));
+			master.reportFake(player, Arrays.copyOf(fake_tweets_for_player.toArray(), fake_tweets_for_player.size(), Status[].class));
 		} else {
 			repo.add_fake_tweet_for_player(tweet);
 		}
