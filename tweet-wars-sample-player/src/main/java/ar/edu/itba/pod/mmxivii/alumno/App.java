@@ -32,7 +32,7 @@ public class App extends ReceiverAdapter {
 	public JChannel fetch_channel() {
 		return this.channel;
 	}
-	
+
 	public void viewAccepted(View new_view) {
 		System.out.print("\n** view: " + new_view);
 	}
@@ -63,6 +63,7 @@ public class App extends ReceiverAdapter {
 				e.printStackTrace();
 			}
 			new TweetsFetcher(player, player_hash, tweets_provider).start();
+			new TweetBroadcaster(app.channel).start();
 			new TweetReceivedNotifier(player, master).start();
 			new FakeTweetsReporter(player, master, tweets_provider).start();
 			new FakeTweetsGenerator(app.channel, player, player_hash).start();

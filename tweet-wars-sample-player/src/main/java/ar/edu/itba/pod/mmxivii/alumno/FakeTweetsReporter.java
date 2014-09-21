@@ -44,22 +44,23 @@ public class FakeTweetsReporter extends Thread {
 		}
 	}
 
-	private void check_if_fake_tweet(Status tweet)
-			throws RemoteException {
+	private void check_if_fake_tweet(Status tweet) throws RemoteException {
 		Status suspicious_tweet = tweet_provider.getTweet(tweet.getId());
-		if (suspicious_tweet == null) {
-			report_fake_tweet(tweet);
-		} else if (!(suspicious_tweet.getCheck().equals(tweet.getCheck())
-				&& suspicious_tweet.getText().equals(tweet.getText()) && suspicious_tweet
-				.getSource().equals(tweet.getSource()))) {
+		if (is_fake(suspicious_tweet, tweet)) {
 			report_fake_tweet(tweet);
 		} else {
 			repo.add_valid_tweet(tweet);
 		}
 	}
 
-	private void report_fake_tweet(Status tweet)
-			throws RemoteException {
+	private boolean is_fake(Status suspicious_tweet, Status tweet) {
+		return suspicious_tweet == null
+				|| !(suspicious_tweet.getCheck().equals(tweet.getCheck())
+						&& suspicious_tweet.getText().equals(tweet.getText()) && suspicious_tweet
+						.getSource().equals(tweet.getSource()));
+	}
+
+	private void report_fake_tweet(Status tweet) throws RemoteException {
 		List<Status> fake_tweets_for_player = repo.fake_tweets_for_player(tweet
 				.getSource());
 		if (fake_tweets_for_player != null
