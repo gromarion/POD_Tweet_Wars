@@ -18,7 +18,7 @@ public class ScoreDisplayer extends Thread {
 	public void run() {
 		while (true) {
 			try {
-				Thread.sleep(5);
+				Thread.sleep(5000);
 				System.out.println(master.getScore(player));
 			} catch (RemoteException | InterruptedException e) {
 				System.out

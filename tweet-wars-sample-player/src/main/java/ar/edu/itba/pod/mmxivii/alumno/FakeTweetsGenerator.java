@@ -41,9 +41,13 @@ public class FakeTweetsGenerator extends Thread {
 	}
 
 	private Object generate_fake_tweet_or_trash() {
-		return new Status(random.nextLong(),
-				new BigInteger(TWEET_CHARACTERS_AMOUNT, random)
-						.toString(TWEET_CHARACTERS_AMOUNT), player.getId(),
-				player_hash);
+		if (random.nextFloat() > 0.5) {
+			return new Status(random.nextLong(),
+					new BigInteger(TWEET_CHARACTERS_AMOUNT, random)
+			.toString(TWEET_CHARACTERS_AMOUNT), player.getId(),
+			player_hash);			
+		} else {
+			return null;
+		}
 	}
 }
