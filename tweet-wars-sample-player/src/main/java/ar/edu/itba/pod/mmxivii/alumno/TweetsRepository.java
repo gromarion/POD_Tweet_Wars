@@ -21,12 +21,20 @@ public class TweetsRepository {
 			instance = new TweetsRepository();
 		return instance;
 	}
-	
-	public List<Status> fake_tweets_for_player(String player_id) {
-		return fake_tweets_map.get(player_id);
+
+	public Status[] fake_tweets_for_player(String player_id) {
+		List<Status> list_fake_tweets_for_player = fake_tweets_map
+				.get(player_id);
+		Status[] fake_tweets_for_player = new Status[list_fake_tweets_for_player
+				.size()];
+		int i = 0;
+		for (Status status : list_fake_tweets_for_player)
+			fake_tweets_for_player[i++] = status;
+		fake_tweets_map.remove(player_id);
+		return fake_tweets_for_player;
 	}
 
-	public void add_fake_tweet_for_player(Status status) {
+	public List<Status> add_fake_tweet_for_player(Status status) {
 		List<Status> tweets;
 		if (fake_tweets_map.get(status.getSource()) == null) {
 			tweets = new ArrayList<Status>();
@@ -34,6 +42,7 @@ public class TweetsRepository {
 		} else
 			tweets = fake_tweets_map.get(status.getSource());
 		tweets.add(status);
+		return tweets;
 	}
 
 	public Status[] fetch_master_tweets() {

@@ -69,7 +69,6 @@ public class App extends ReceiverAdapter {
 						app.fetch_channel()).start();
 				new FakeTweetsGenerator(app.fetch_channel(), player,
 						player_hash).start();
-				new ScoreDisplayer(player, master).start();
 			} catch (Exception e) {
 				System.out
 						.println("Something wrong happened while creating the JChannel");

@@ -29,6 +29,7 @@ tmp/**/*
 *~.nib
 local.properties
 .classpath
+tweet-wars-sample-player/target/classes/ar/edu/itba/pod/mmxivii/alumno/*.class
 .settings/
 .loadpath
 /src/main/resources/rebel.xml
