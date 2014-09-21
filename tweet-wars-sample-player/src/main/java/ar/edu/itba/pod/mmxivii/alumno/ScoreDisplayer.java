@@ -19,7 +19,7 @@ public class ScoreDisplayer extends Thread {
 		while (true) {
 			try {
 				Thread.sleep(5);
-				master.getScore(player);
+				System.out.println(master.getScore(player));
 			} catch (RemoteException | InterruptedException e) {
 				System.out
 						.println("Something wrong happened while fetching scores");
