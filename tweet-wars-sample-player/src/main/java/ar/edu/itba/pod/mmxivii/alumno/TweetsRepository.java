@@ -13,14 +13,18 @@ public class TweetsRepository {
 
 	private static TweetsRepository instance = null;
 	private Deque<Status> master_tweets;
-	private Deque<Status> players_tweets;
 	private Deque<Status> valid_player_tweets;
 	private Map<String, List<Status>> fake_tweets_map;
+	private static final int MAX_MASTER_TWEETS_SIZE = 100;
 
 	public static TweetsRepository get_instance() {
 		if (instance == null)
 			instance = new TweetsRepository();
 		return instance;
+	}
+	
+	public boolean can_fetch_more_tweets() {
+		return master_tweets.size() < MAX_MASTER_TWEETS_SIZE;
 	}
 
 	public List<Status> fake_tweets_for_player(String player_id) {
@@ -41,28 +45,12 @@ public class TweetsRepository {
 		valid_player_tweets.add(tweet);
 	}
 
-	public void add_player_tweet(Status tweet) {
-		synchronized (this.players_tweets) {
-			this.players_tweets.push(tweet);
-		}
-	}
-
 	public Status[] fetch_master_tweets() {
 		synchronized (this.master_tweets) {
 			Status[] ans = new Status[master_tweets.size()];
 			int i = 0;
 			while (!this.master_tweets.isEmpty())
 				ans[i++] = master_tweets.pop();
-			return ans;
-		}
-	}
-
-	public Status[] fetch_players_tweets() {
-		synchronized (this.players_tweets) {
-			Status[] ans = new Status[this.players_tweets.size()];
-			int i = 0;
-			while (!this.players_tweets.isEmpty())
-				ans[i++] = players_tweets.pop();
 			return ans;
 		}
 	}
@@ -86,7 +74,6 @@ public class TweetsRepository {
 
 	private TweetsRepository() {
 		master_tweets = new ArrayDeque<Status>();
-		players_tweets = new ArrayDeque<Status>();
 		valid_player_tweets = new ArrayDeque<Status>();
 		fake_tweets_map = new HashMap<String, List<Status>>();
 	}

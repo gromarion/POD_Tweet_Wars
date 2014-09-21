@@ -8,7 +8,7 @@ import ar.edu.itba.pod.mmxivii.tweetwars.GamePlayer;
 import ar.edu.itba.pod.mmxivii.tweetwars.Status;
 import ar.edu.itba.pod.mmxivii.tweetwars.TweetsProvider;
 
-public class FakeTweetsReporter extends Thread {
+public class FakeTweetsReporter {
 
 	private GamePlayer player;
 	private GameMaster master;
@@ -23,24 +23,13 @@ public class FakeTweetsReporter extends Thread {
 		this.repo = TweetsRepository.get_instance();
 	}
 
-	public void run() {
-		while (true) {
-			report_fake_tweets();
-		}
-	}
-
-	private void report_fake_tweets() {
-		Status[] tweets = repo.fetch_players_tweets();
-		if (tweets.length == 0)
-			return;
-		for (Status tweet : tweets) {
-			try {
-				check_if_fake_tweet(tweet);
-			} catch (RemoteException e) {
-				System.out
-						.println("Something wrong happened while checking a tweet");
-				e.printStackTrace();
-			}
+	public void filter_and_broadcast_real_tweets(Status tweet) {
+		try {
+			check_if_fake_tweet(tweet);
+		} catch (RemoteException e) {
+			System.out
+					.println("Something wrong happened while checking a tweet");
+			e.printStackTrace();
 		}
 	}
 
@@ -49,7 +38,7 @@ public class FakeTweetsReporter extends Thread {
 		if (is_fake(suspicious_tweet, tweet)) {
 			report_fake_tweet(tweet);
 		} else {
-			repo.add_valid_tweet(tweet);
+			master.tweetReceived(player, tweet);
 		}
 	}
 
@@ -65,8 +54,8 @@ public class FakeTweetsReporter extends Thread {
 				.getSource());
 		if (fake_tweets_for_player != null
 				&& fake_tweets_for_player.size() >= GameMaster.MIN_FAKE_TWEETS_BATCH) {
-			master.reportFake(player,
-					((Status[]) fake_tweets_for_player.toArray()));
+			Object[] o = fake_tweets_for_player.toArray();
+			master.reportFake(player, ((Status[]) o));
 		} else {
 			repo.add_fake_tweet_for_player(tweet);
 		}

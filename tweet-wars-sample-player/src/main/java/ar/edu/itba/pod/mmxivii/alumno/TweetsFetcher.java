@@ -1,8 +1,10 @@
 package ar.edu.itba.pod.mmxivii.alumno;
 
-import java.rmi.RemoteException;
+import org.jgroups.JChannel;
+import org.jgroups.Message;
 
 import ar.edu.itba.pod.mmxivii.tweetwars.GamePlayer;
+import ar.edu.itba.pod.mmxivii.tweetwars.Status;
 import ar.edu.itba.pod.mmxivii.tweetwars.TweetsProvider;
 
 public class TweetsFetcher extends Thread {
@@ -10,26 +12,33 @@ public class TweetsFetcher extends Thread {
 	private TweetsProvider tweets_provider;
 	private GamePlayer player;
 	private String player_hash;
-	private TweetsRepository repo;
 	private static final int BATCH_SIZE = 10;
+	private TweetsRepository repo;
+	private JChannel channel;
 
 	public TweetsFetcher(GamePlayer player, String player_hash,
-			TweetsProvider tweets_provider) {
+			TweetsProvider tweets_provider, JChannel channel) {
 		this.player = player;
 		this.player_hash = player_hash;
 		this.tweets_provider = tweets_provider;
 		this.repo = TweetsRepository.get_instance();
+		this.channel = channel;
 	}
 
 	public void run() {
 		while (true) {
-			try {
-				repo.add_master_tweets(tweets_provider.getNewTweets(player,
-						player_hash, BATCH_SIZE));
-			} catch (RemoteException e) {
-				System.out
-						.println("Something went wrong while getting new tweets");
-				e.printStackTrace();
+			if (repo.can_fetch_more_tweets()) {
+				System.out.println("fetching tweets");
+				try {
+					for (Status tweet : tweets_provider.getNewTweets(player,
+							player_hash, BATCH_SIZE)) {
+						channel.send(new Message(null, null, tweet));
+					}
+				} catch (Exception e) {
+					System.out
+							.println("Something went wrong while getting new tweets");
+					e.printStackTrace();
+				}
 			}
 		}
 	}

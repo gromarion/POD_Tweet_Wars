@@ -28,7 +28,8 @@ public class FakeTweetsGenerator extends Thread {
 	public void run() {
 		while (true) {
 			try {
-				channel.send(new Message(null, null, generate_fake_tweet()));
+				channel.send(new Message(null, null,
+						generate_fake_tweet_or_trash()));
 			} catch (Exception e) {
 				System.out
 						.println("Something wrong happened while trying to send a fake tweet");
@@ -37,7 +38,7 @@ public class FakeTweetsGenerator extends Thread {
 		}
 	}
 
-	private Status generate_fake_tweet() {
+	private Object generate_fake_tweet_or_trash() {
 		return new Status(random.nextLong(),
 				new BigInteger(TWEET_CHARACTERS_AMOUNT, random)
 						.toString(TWEET_CHARACTERS_AMOUNT), player.getId(),

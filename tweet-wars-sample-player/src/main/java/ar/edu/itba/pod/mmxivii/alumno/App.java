@@ -21,13 +21,18 @@ public class App extends ReceiverAdapter {
 	public static final String TWEETS_PROVIDER_NAME = "tweetsProvider";
 	public static final String GAME_MASTER_NAME = "gameMaster";
 	private JChannel channel;
-	private TweetsRepository repo;
+	private GamePlayer player;
+	private GameMaster master;
+	private TweetsProvider tweets_provider;
 
-	public App(String cluster_name) throws Exception {
+	public App(String cluster_name, GamePlayer player, GameMaster master,
+			TweetsProvider tweets_provider) throws Exception {
 		this.channel = new JChannel();
 		this.channel.setReceiver(this);
 		this.channel.connect(cluster_name);
-		this.repo = TweetsRepository.get_instance();
+		this.player = player;
+		this.master = master;
+		this.tweets_provider = tweets_provider;
 	}
 
 	public JChannel fetch_channel() {
@@ -39,8 +44,13 @@ public class App extends ReceiverAdapter {
 	}
 
 	public void receive(Message msg) {
-		if (msg.getObject() instanceof Status)
-			repo.add_player_tweet((Status) msg.getObject());
+		if (msg.getObject() instanceof Status) {
+			Status received_status = (Status) msg.getObject();
+			if (!received_status.getSource().equals(player.getId()))
+				new FakeTweetsReporter(player, master, tweets_provider)
+						.filter_and_broadcast_real_tweets((Status) msg
+								.getObject());
+		}
 	}
 
 	public static void main(String[] args) {
@@ -53,22 +63,18 @@ public class App extends ReceiverAdapter {
 
 			register_player(master, player, player_hash);
 
-			App app = null;
 			try {
-				app = new App(args[4]);
+				App app = new App(args[4], player, master, tweets_provider);
+				new TweetsFetcher(player, player_hash, tweets_provider,
+						app.fetch_channel()).start();
 				new FakeTweetsGenerator(app.fetch_channel(), player,
 						player_hash).start();
+				new ScoreDisplayer(player, master).start();
 			} catch (Exception e) {
 				System.out
 						.println("Something wrong happened while creating the JChannel");
 				e.printStackTrace();
 			}
-			new TweetsFetcher(player, player_hash, tweets_provider).start();
-			new TweetBroadcaster(app.channel).start();
-			new TweetReceivedNotifier(player, master).start();
-			new FakeTweetsReporter(player, master, tweets_provider).start();
-			new FakeTweetsGenerator(app.channel, player, player_hash).start();
-			new RandomBullshitGenerator(app.channel).start();
 
 		} catch (RemoteException | NotBoundException e) {
 			System.err.println("App Error: " + e.getMessage());

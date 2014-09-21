@@ -18,6 +18,7 @@ public class TweetReceivedNotifier extends Thread {
 
 	public void run() {
 		while (true) {
+			System.out.println("notifier!");
 			for (Status tweet : fetch_received_tweets()) {
 				try {
 					master.tweetReceived(player, tweet);

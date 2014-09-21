@@ -18,6 +18,7 @@ public class RandomBullshitGenerator extends Thread {
 	public void start() {
 		while (true) {
 			float r = random.nextFloat();
+			System.out.println("generating bullshit...");
 			try {
 				if (r > 0.5) {
 					channel.send(new Message(null, null, null));

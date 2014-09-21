@@ -17,6 +17,7 @@ public class TweetBroadcaster extends Thread {
 
 	public void start() {
 		while (true) {
+			System.out.println("boradcasting!");
 			for (Status tweet : repo.fetch_master_tweets()) {
 				try {
 					channel.send(new Message(null, null, tweet));
