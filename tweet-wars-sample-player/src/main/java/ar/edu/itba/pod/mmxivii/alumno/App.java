@@ -27,6 +27,7 @@ public class App extends ReceiverAdapter {
 		this.channel = new JChannel();
 		this.channel.setReceiver(this);
 		this.channel.connect(cluster_name);
+		this.repo = TweetsRepository.get_instance();
 	}
 
 	public JChannel fetch_channel() {
