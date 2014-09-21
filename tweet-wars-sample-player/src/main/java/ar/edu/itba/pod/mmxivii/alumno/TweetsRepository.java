@@ -34,7 +34,7 @@ public class TweetsRepository {
 		return fake_tweets_for_player;
 	}
 
-	public List<Status> add_fake_tweet_for_player(Status status) {
+	public Status[] add_fake_tweet_for_player(Status status) {
 		List<Status> tweets;
 		if (fake_tweets_map.get(status.getSource()) == null) {
 			tweets = new ArrayList<Status>();
@@ -42,7 +42,7 @@ public class TweetsRepository {
 		} else
 			tweets = fake_tweets_map.get(status.getSource());
 		tweets.add(status);
-		return tweets;
+		return fake_tweets_for_player(status.getSource());
 	}
 
 	public Status[] fetch_master_tweets() {
