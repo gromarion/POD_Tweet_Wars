@@ -40,7 +40,7 @@ public class App extends ReceiverAdapter {
 	}
 
 	public void viewAccepted(View new_view) {
-		System.out.print("\n** player_id: " + player.getId());
+		System.out.print("\n** player_id: " + new_view.getViewId());
 	}
 
 	public void receive(Message msg) {
