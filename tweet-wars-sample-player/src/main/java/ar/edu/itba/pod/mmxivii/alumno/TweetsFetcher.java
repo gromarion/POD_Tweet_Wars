@@ -13,7 +13,6 @@ public class TweetsFetcher extends Thread {
 	private GamePlayer player;
 	private String player_hash;
 	private static final int BATCH_SIZE = 10;
-	private TweetsRepository repo;
 	private JChannel channel;
 
 	public TweetsFetcher(GamePlayer player, String player_hash,
@@ -21,24 +20,20 @@ public class TweetsFetcher extends Thread {
 		this.player = player;
 		this.player_hash = player_hash;
 		this.tweets_provider = tweets_provider;
-		this.repo = TweetsRepository.get_instance();
 		this.channel = channel;
 	}
 
 	public void run() {
 		while (true) {
-			if (repo.can_fetch_more_tweets()) {
-				System.out.println("fetching tweets");
-				try {
-					for (Status tweet : tweets_provider.getNewTweets(player,
-							player_hash, BATCH_SIZE)) {
-						channel.send(new Message(null, null, tweet));
-					}
-				} catch (Exception e) {
-					System.out
-							.println("Something went wrong while getting new tweets");
-					e.printStackTrace();
+			try {
+				for (Status tweet : tweets_provider.getNewTweets(player,
+						player_hash, BATCH_SIZE)) {
+					channel.send(new Message(null, null, tweet));
 				}
+			} catch (Exception e) {
+				System.out
+						.println("Something went wrong while getting new tweets");
+				e.printStackTrace();
 			}
 		}
 	}
