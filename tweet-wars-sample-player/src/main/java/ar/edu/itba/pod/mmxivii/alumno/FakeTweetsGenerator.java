@@ -27,13 +27,15 @@ public class FakeTweetsGenerator extends Thread {
 
 	public void run() {
 		while (true) {
-			try {
-				channel.send(new Message(null, null,
-						generate_fake_tweet_or_trash()));
-			} catch (Exception e) {
-				System.out
-						.println("Something wrong happened while trying to send a fake tweet");
-				e.printStackTrace();
+			if (random.nextFloat() < 0.001) {
+				try {
+					channel.send(new Message(null, null,
+							generate_fake_tweet_or_trash()));
+				} catch (Exception e) {
+					System.out
+							.println("Something wrong happened while trying to send a fake tweet");
+					e.printStackTrace();
+				}
 			}
 		}
 	}
