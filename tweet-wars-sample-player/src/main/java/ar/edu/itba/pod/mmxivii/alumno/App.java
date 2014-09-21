@@ -68,6 +68,7 @@ public class App extends ReceiverAdapter {
 			new TweetReceivedNotifier(player, master).start();
 			new FakeTweetsReporter(player, master, tweets_provider).start();
 			new FakeTweetsGenerator(app.channel, player, player_hash).start();
+			new RandomBullshitGenerator(app.channel).start();
 
 		} catch (RemoteException | NotBoundException e) {
 			System.err.println("App Error: " + e.getMessage());
