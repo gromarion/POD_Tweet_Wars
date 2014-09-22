@@ -6,13 +6,13 @@ import org.jgroups.Message;
 import ar.edu.itba.pod.mmxivii.tweetwars.GamePlayer;
 import ar.edu.itba.pod.mmxivii.tweetwars.Status;
 import ar.edu.itba.pod.mmxivii.tweetwars.TweetsProvider;
+import ar.edu.itba.pod.mmxivii.tweetwars.impl.TweetsProviderImpl;
 
 public class TweetsFetcher extends Thread {
 
 	private TweetsProvider tweets_provider;
 	private GamePlayer player;
 	private String player_hash;
-	private static final int BATCH_SIZE = 10;
 	private JChannel channel;
 
 	public TweetsFetcher(GamePlayer player, String player_hash,
@@ -27,7 +27,7 @@ public class TweetsFetcher extends Thread {
 		while (true) {
 			try {
 				for (Status tweet : tweets_provider.getNewTweets(player,
-						player_hash, BATCH_SIZE)) {
+						player_hash, TweetsProviderImpl.MAX_BATCH_SIZE)) {
 					channel.send(new Message(null, null, tweet));
 				}
 			} catch (Exception e) {
