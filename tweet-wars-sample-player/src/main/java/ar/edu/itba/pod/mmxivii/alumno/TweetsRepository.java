@@ -29,15 +29,15 @@ public class TweetsRepository {
 		return convert_to_array(list_fake_tweets_for_player);
 	}
 
-	public Status[] add_fake_tweet_for_player(Status status) {
+	public void add_fake_tweet_for_player(Status status) {
 		List<Status> tweets;
 		if (fake_tweets_map.get(status.getSource()) == null) {
 			tweets = new ArrayList<Status>();
-			fake_tweets_map.put(status.getSource(), tweets);
-		} else
+		} else {
 			tweets = fake_tweets_map.get(status.getSource());
-		tweets.add(status);
-		return convert_to_array(tweets);
+			tweets.add(status);
+			fake_tweets_map.put(status.getSource(), tweets);
+		}
 	}
 
 	public Status[] fetch_master_tweets() {
@@ -61,8 +61,7 @@ public class TweetsRepository {
 	}
 
 	private Status[] convert_to_array(List<Status> tweets) {
-		Status[] ans = new Status[tweets
-				.size()];
+		Status[] ans = new Status[tweets.size()];
 		int i = 0;
 		for (Status status : tweets)
 			ans[i++] = status;
