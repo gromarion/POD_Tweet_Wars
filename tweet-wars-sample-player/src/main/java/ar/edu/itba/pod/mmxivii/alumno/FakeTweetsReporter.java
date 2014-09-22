@@ -35,8 +35,8 @@ public class FakeTweetsReporter {
 	private void check_if_fake_tweet(Status tweet) throws RemoteException {
 		Status suspicious_tweet = tweet_provider.getTweet(tweet.getId());
 		if (is_fake(suspicious_tweet, tweet)) {
-			repo.add_fake_tweet_for_player(tweet);
-			report_fake_tweet(tweet);
+//			repo.add_fake_tweet_for_player(tweet);
+//			report_fake_tweet(tweet);
 		} else {
 			master.tweetReceived(player, tweet);
 		}
