@@ -25,6 +25,8 @@ public class TweetsRepository {
 	public Status[] fake_tweets_for_player(String player_id) {
 		List<Status> list_fake_tweets_for_player = fake_tweets_map
 				.get(player_id);
+		if (list_fake_tweets_for_player == null)
+			return null;
 		fake_tweets_map.remove(player_id);
 		return convert_to_array(list_fake_tweets_for_player);
 	}

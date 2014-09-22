@@ -35,8 +35,8 @@ public class FakeTweetsReporter {
 	private void check_if_fake_tweet(Status tweet) throws RemoteException {
 		Status suspicious_tweet = tweet_provider.getTweet(tweet.getId());
 		if (is_fake(suspicious_tweet, tweet)) {
-//			repo.add_fake_tweet_for_player(tweet);
-//			report_fake_tweet(tweet);
+			repo.add_fake_tweet_for_player(tweet);
+			report_fake_tweet(tweet);
 		} else {
 			master.tweetReceived(player, tweet);
 		}
@@ -52,7 +52,6 @@ public class FakeTweetsReporter {
 	private void report_fake_tweet(Status tweet) throws RemoteException {
 		Status[] fake_tweets_for_player = repo.fake_tweets_for_player(tweet
 				.getSource());
-		System.out.println("length = " + fake_tweets_for_player.length);
 		if (fake_tweets_for_player != null
 				&& fake_tweets_for_player.length >= GameMaster.MIN_FAKE_TWEETS_BATCH) {
 			System.out.println("REPORTED FAKE!");
