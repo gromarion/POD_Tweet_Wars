@@ -43,7 +43,8 @@ public class App extends ReceiverAdapter {
 	}
 
 	public void receive(Message msg) {
-		if (msg.getObject() instanceof Status) {
+		if (msg.getObject() instanceof Status
+				&& msg.getObject().getClass() == Status.class) {
 			Status received_status = (Status) msg.getObject();
 			if (received_status.getSource() != null
 					&& !received_status.getSource().equals(player.getId()))
